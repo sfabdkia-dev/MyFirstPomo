@@ -1,0 +1,136 @@
+:root {
+  color-scheme: light;
+  font-family: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --bg: #f6f7fb;
+  --panel: #ffffff;
+  --text: #1e2430;
+  --muted: #64748b;
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --danger: #dc2626;
+  --danger-hover: #b91c1c;
+  --shadow: 0 12px 30px rgba(30, 36, 48, 0.1);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.app {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) 320px;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.timer-panel,
+.log-panel {
+  background: var(--panel);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+}
+
+.timer-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+h1,
+h2 { margin-top: 0; }
+
+.session-picker {
+  width: 100%;
+  max-width: 520px;
+  margin-bottom: 1rem;
+}
+
+.preset-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.preset {
+  border: 1px solid #d1d5db;
+  border-radius: 999px;
+  padding: 0.5rem 0.9rem;
+  background: #fff;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.preset.active {
+  border-color: var(--primary);
+  background: #eef2ff;
+  color: var(--primary);
+}
+
+.mode-label {
+  color: var(--muted);
+  font-weight: 600;
+  margin: 1rem 0 0.5rem;
+}
+
+.timer {
+  font-size: clamp(3rem, 12vw, 8rem);
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  margin: 0.5rem 0 1.5rem;
+}
+
+.controls {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.btn {
+  border: none;
+  border-radius: 10px;
+  padding: 0.75rem 1.4rem;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.primary { background: var(--primary); }
+.primary:hover { background: var(--primary-hover); }
+.danger { background: var(--danger); }
+.danger:hover { background: var(--danger-hover); }
+
+.log-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.log-list li {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.7rem;
+}
+
+.hint,
+.empty-state { color: var(--muted); }
+
+.empty-state.hidden { display: none; }
+
+@media (max-width: 900px) {
+  .app {
+    grid-template-columns: 1fr;
+  }
+}

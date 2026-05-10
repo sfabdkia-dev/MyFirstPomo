@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pomodoro Focus Timer</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <section class="timer-panel">
+      <h1>Pomodoro Timer</h1>
+
+      <div class="session-picker">
+        <h2>Session Presets</h2>
+        <div class="preset-buttons" role="radiogroup" aria-label="Pomodoro presets">
+          <button class="preset active" data-work="50" data-break="10" aria-pressed="true">50 / 10</button>
+          <button class="preset" data-work="25" data-break="5" aria-pressed="false">25 / 5</button>
+          <button class="preset" data-work="90" data-break="20" aria-pressed="false">90 / 20</button>
+          <button class="preset" data-work="15" data-break="3" aria-pressed="false">15 / 3</button>
+        </div>
+      </div>
+
+      <p id="modeLabel" class="mode-label">Work Session (50 min)</p>
+      <div id="timerDisplay" class="timer" aria-live="polite">50:00</div>
+
+      <div class="controls">
+        <button id="startPauseBtn" class="btn primary">Start</button>
+        <button id="stopBtn" class="btn danger">Stop</button>
+      </div>
+    </section>
+
+    <aside class="log-panel">
+      <h2>Pomodoro Activity Log</h2>
+      <p class="hint">Completed active focus durations:</p>
+      <ul id="activityLog" class="log-list"></ul>
+      <p id="emptyState" class="empty-state">No completed pomodoro sessions yet.</p>
+    </aside>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
