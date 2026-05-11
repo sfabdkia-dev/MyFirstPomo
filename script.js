@@ -20,6 +20,9 @@ const taskSidebar = document.getElementById('taskSidebar');
 const summarySidebar = document.getElementById('summarySidebar');
 const heatmapHeader = document.getElementById('heatmapHeader');
 const heatmapGrid = document.getElementById('heatmapGrid');
+const customPresetChip = document.getElementById('customPresetChip');
+const customTimeModal = document.getElementById('customTimeModal');
+const closeCustomTimeBtn = document.getElementById('closeCustomTimeBtn');
 const applyCustomBtn = document.getElementById('applyCustomBtn');
 const customWorkInput = document.getElementById('customWork');
 const customBreakInput = document.getElementById('customBreak');
@@ -259,14 +262,17 @@ stopBtn.addEventListener('click', () => {
   stopTimer({ keepMode: false });
 });
 
+customPresetChip.addEventListener('click', () => { customTimeModal.classList.remove('hidden'); });
+closeCustomTimeBtn.addEventListener('click', () => { customTimeModal.classList.add('hidden'); });
+
 applyCustomBtn.addEventListener('click', () => {
   const customWork = Number(customWorkInput.value); const customBreak = Number(customBreakInput.value);
   if (!Number.isFinite(customWork) || !Number.isFinite(customBreak) || customWork < 1 || customBreak < 1) { alert('Please enter valid focus and break durations.'); return; }
-  workMinutes = customWork; breakMinutes = customBreak; isWorkMode = true; setPresetState(null); stopTimer({ keepMode: true });
+  workMinutes = customWork; breakMinutes = customBreak; isWorkMode = true; setPresetState(null); customPresetChip.classList.add('active'); customTimeModal.classList.add('hidden'); stopTimer({ keepMode: true });
 });
 
 presets.forEach((button) => button.addEventListener('click', () => {
-  setPresetState(button); workMinutes = Number(button.dataset.work); breakMinutes = Number(button.dataset.break); isWorkMode = true; stopTimer({ keepMode: true });
+  setPresetState(button); customPresetChip.classList.remove('active'); workMinutes = Number(button.dataset.work); breakMinutes = Number(button.dataset.break); isWorkMode = true; stopTimer({ keepMode: true });
 }));
 
 resetHistoryBtn.addEventListener('click', () => { focusedSecondsTotal = 0; activityLog.innerHTML = ''; emptyState.classList.remove('hidden'); updateFocusedTotal();
