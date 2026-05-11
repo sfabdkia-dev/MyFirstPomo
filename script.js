@@ -44,7 +44,7 @@ let totalSeconds = workMinutes * 60; let remainingSeconds = totalSeconds;
 let isRunning = false; let intervalId = null;
 let focusedSecondsTotal = 0; let waitingForManualStart = false;
 let targetEndTimestampMs = null; let lastPerfNow = null;
-let bgImageData = null;
+let bgImageData = 'assets/backgrounds/bg1.jpg';
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -347,9 +347,9 @@ columnOpacity.addEventListener('input', () => {
 
 applyBgBtn.addEventListener('click', () => {
   const opacity = Number(bgOpacity.value) / 100;
-  const heatmapAlpha = Number(columnOpacity.value) / 100;
+  const panelAlpha = Number(columnOpacity.value) / 100;
   document.body.style.setProperty('--custom-bg-opacity', opacity.toString());
-  document.body.style.setProperty('--heatmap-cell-alpha', heatmapAlpha.toString());
+  document.body.style.setProperty('--panel-alpha', (panelAlpha * 0.75).toString());
   if (bgImageData) {
     document.body.style.setProperty('--custom-bg-image', `url(${bgImageData})`);
   }
@@ -369,6 +369,8 @@ updateDisplay();
 updateFocusedTotal();
 renderHeatmap();
 renderPreloadedThumbs();
+document.body.style.setProperty('--custom-bg-image', `url(${bgImageData})`);
+document.body.style.setProperty('--custom-bg-opacity', '1');
 setSidebarState(taskSidebar, false);
 setSidebarState(summarySidebar, false);
 syncRailVisibility();
