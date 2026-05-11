@@ -9,9 +9,14 @@
 <body>
   <main class="app">
     <section class="timer-panel">
+      <div class="focus-card" id="focusCard">🎯 No task selected yet</div>
+
       <div class="timer-header">
         <h1>Pomodoro Timer</h1>
-        <button id="themeToggleBtn" class="ghost-btn" aria-label="Toggle dark mode">🌙 Dark Mode</button>
+        <div class="top-actions">
+          <button id="themeToggleBtn" class="ghost-btn" aria-label="Toggle dark mode">🌙 Dark Mode</button>
+          <button id="taskSidebarToggle" class="ghost-btn" aria-label="Show or hide task sidebar">📝 Tasks</button>
+        </div>
       </div>
 
       <div class="session-picker">
@@ -24,20 +29,25 @@
         </div>
 
         <div class="custom-session">
-          <label>
-            Focus (min)
-            <input id="customWork" type="number" min="1" max="240" value="40" />
-          </label>
-          <label>
-            Break (min)
-            <input id="customBreak" type="number" min="1" max="120" value="8" />
-          </label>
+          <label>Focus (min)<input id="customWork" type="number" min="1" max="240" value="40" /></label>
+          <label>Break (min)<input id="customBreak" type="number" min="1" max="120" value="8" /></label>
           <button id="applyCustomBtn" class="btn secondary">Use Custom</button>
         </div>
       </div>
 
+      <div class="sound-settings">
+        <label for="soundSelect">Alert sound</label>
+        <select id="soundSelect" aria-label="Choose alert sound">
+          <option value="simple" selected>Simple tone</option>
+          <option value="bell">Bell</option>
+          <option value="chime">Chime</option>
+          <option value="off">Off</option>
+        </select>
+      </div>
+
       <p id="modeLabel" class="mode-label">Work Session (50 min)</p>
       <div id="timerDisplay" class="timer" aria-live="polite">50:00</div>
+      <p id="statusMessage" class="status-message"></p>
 
       <div class="controls">
         <button id="startPauseBtn" class="btn primary">Start</button>
@@ -45,17 +55,28 @@
       </div>
     </section>
 
-    <aside class="log-panel">
-      <h2>Pomodoro Activity Log</h2>
-      <p class="hint">Completed active focus durations:</p>
-      <ul id="activityLog" class="log-list"></ul>
-      <p id="emptyState" class="empty-state">No completed pomodoro sessions yet.</p>
+    <aside class="right-panel" id="rightPanel">
+      <section class="task-panel" id="taskPanel">
+        <h2>Task Planner</h2>
+        <div class="task-create">
+          <input id="taskInput" type="text" maxlength="100" placeholder="Write a task..." />
+          <button id="addTaskBtn" class="btn secondary">Add Task</button>
+        </div>
+        <ul id="taskList" class="task-list"></ul>
+      </section>
 
-      <div class="totals">
-        <p>Total Focused Time</p>
-        <strong id="totalFocusedTime">00h 00m 00s</strong>
-        <button id="resetHistoryBtn" class="btn warning">Reset Totals & History</button>
-      </div>
+      <section class="log-panel">
+        <h2>Pomodoro Activity Log</h2>
+        <p class="hint">Completed active focus durations:</p>
+        <ul id="activityLog" class="log-list"></ul>
+        <p id="emptyState" class="empty-state">No completed pomodoro sessions yet.</p>
+
+        <div class="totals">
+          <p>Total Focused Time</p>
+          <strong id="totalFocusedTime">00h 00m 00s</strong>
+          <button id="resetHistoryBtn" class="btn warning">Reset Totals & History</button>
+        </div>
+      </section>
     </aside>
   </main>
 
