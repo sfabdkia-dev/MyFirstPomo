@@ -1,5 +1,5 @@
-:root { font-family: "Inter", "Segoe UI", sans-serif; --bg-grad: radial-gradient(circle at top right, #dbeafe, #f1f5f9 45%, #e2e8f0); --panel: rgba(255,255,255,.75); --text:#0f172a; --muted:#475569; --primary:#6366f1; --primary-hover:#4f46e5; --danger:#ef4444; --danger-hover:#dc2626; --accent:#06b6d4; --warning:#f59e0b; --border:rgba(148,163,184,.35); --shadow:0 20px 35px rgba(15,23,42,.15); }
-body.dark { --bg-grad: radial-gradient(circle at top right, #1e1b4b, #0b1120 50%, #020617); --panel: rgba(15,23,42,.75); --text:#e2e8f0; --muted:#94a3b8; --primary:#818cf8; --primary-hover:#6366f1; --danger:#f87171; --danger-hover:#ef4444; --accent:#22d3ee; --warning:#fbbf24; --border:rgba(148,163,184,.25); --shadow:0 20px 35px rgba(0,0,0,.45); }
+:root { font-family: "Inter", "Segoe UI", sans-serif; --bg-grad: radial-gradient(circle at top right, #dbeafe, #f1f5f9 45%, #e2e8f0); --panel-rgb:255,255,255; --panel-alpha:.75; --panel: rgba(var(--panel-rgb),var(--panel-alpha)); --text:#0f172a; --muted:#475569; --primary:#6366f1; --primary-hover:#4f46e5; --danger:#ef4444; --danger-hover:#dc2626; --accent:#06b6d4; --warning:#f59e0b; --border:rgba(148,163,184,.35); --shadow:0 20px 35px rgba(15,23,42,.15); }
+body.dark { --bg-grad: radial-gradient(circle at top right, #1e1b4b, #0b1120 50%, #020617); --panel-rgb:15,23,42; --panel: rgba(var(--panel-rgb),var(--panel-alpha)); --text:#e2e8f0; --muted:#94a3b8; --primary:#818cf8; --primary-hover:#6366f1; --danger:#f87171; --danger-hover:#ef4444; --accent:#22d3ee; --warning:#fbbf24; --border:rgba(148,163,184,.25); --shadow:0 20px 35px rgba(0,0,0,.45); }
 *{box-sizing:border-box}
 body{margin:0;min-height:100vh;background:var(--bg-grad);color:var(--text);position:relative}
 body::before{content:"";position:fixed;inset:0;background-image:var(--custom-bg-image, none);background-size:cover;background-position:center;opacity:var(--custom-bg-opacity, 0);z-index:-1;pointer-events:none}
@@ -31,12 +31,12 @@ input,select{border-radius:10px;border:1px solid var(--border);padding:.55rem .6
 
 .side-rail{position:fixed;left:0;top:76px;display:flex;flex-direction:column;gap:.5rem;z-index:40;background:var(--panel);border:1px solid var(--border);border-left:none;border-radius:0 12px 12px 0;padding:.5rem .45rem;box-shadow:var(--shadow);transition:opacity .2s ease}
 .rail-btn{border:1px solid var(--border);background:transparent;border-radius:10px;padding:.45rem .5rem;cursor:pointer;color:var(--text)}
-.summary-sidebar{position:fixed;left:0;top:1rem;bottom:1rem;width:560px;padding:.8rem;transform:translateX(-100%);transition:transform .25s ease;z-index:29}
+.summary-sidebar{position:fixed;left:0;top:1rem;bottom:1rem;width:auto;padding:.8rem;transform:translateX(-100%);transition:transform .25s ease;z-index:29}
 .summary-sidebar.open{transform:translateX(0)}
-.summary-shell{height:100%;border:1px solid var(--border);background:color-mix(in srgb,var(--panel) 98%, #ffffff);border-radius:20px;padding:.8rem;overflow-y:auto;overflow-x:hidden}
+.summary-shell{height:100%;width:max-content;border:1px solid var(--border);background:color-mix(in srgb,var(--panel) 98%, #ffffff);border-radius:20px;padding:.8rem;padding-right:calc(.8rem + 30px);overflow-y:auto;overflow-x:hidden}
 .heatmap-header{display:grid;grid-template-columns:60px repeat(30,13px);gap:4px;margin:.6rem 0;align-items:center}.heatmap-header span{font-size:.55rem;color:var(--muted);text-align:center}
 .heatmap-grid{display:grid;gap:6px}.heatmap-row{display:grid;grid-template-columns:60px repeat(30,13px);gap:4px;align-items:center}.heatmap-day{font-size:.7rem;color:var(--muted)}
-.heatmap-cell{width:13px;height:13px;border-radius:2px;background:#cbd5e1}.heatmap-level-1{background:#bae6fd}.heatmap-level-2{background:#38bdf8}.heatmap-level-3{background:#0284c7}.heatmap-level-4{background:#075985}
+.heatmap-cell{width:13px;height:13px;border-radius:2px;background:#94a3b8;border:1px solid rgba(15,23,42,.28)}.heatmap-level-1{background:#7dd3fc}.heatmap-level-2{background:#38bdf8}.heatmap-level-3{background:#0284c7}.heatmap-level-4{background:#075985}
 
 .side-rail.hidden{opacity:0;pointer-events:none}
 
