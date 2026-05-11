@@ -118,6 +118,9 @@ const dateKey = (d) => d.toISOString().slice(0,10);
 
 const renderHeatmap = () => {
   heatmapHeader.innerHTML = '';
+  const spacer = document.createElement('span');
+  spacer.textContent = '';
+  heatmapHeader.appendChild(spacer);
   for (let i = 0; i < 30; i += 1) {
     const mark = document.createElement('span');
     mark.textContent = i % 2 === 0 ? `${7 + i/2}` : '';
@@ -274,6 +277,20 @@ themeToggleBtn.addEventListener('click', () => { const darkActive = document.bod
 tasksRailBtn.addEventListener('click', () => { taskSidebar.classList.toggle('open'); summarySidebar.classList.remove('open'); syncRailVisibility(); });
 summaryRailBtn.addEventListener('click', () => { summarySidebar.classList.toggle('open'); taskSidebar.classList.remove('open'); syncRailVisibility(); });
 previewSoundBtn.addEventListener('click', async () => { if (audioCtx.state === 'suspended') await audioCtx.resume(); playAlert(1); });
+
+
+
+document.addEventListener('pointerdown', (event) => {
+  const target = event.target;
+  const insideTask = target.closest('#taskSidebar');
+  const insideSummary = target.closest('#summarySidebar');
+  const insideRail = target.closest('.side-rail');
+  if (!insideTask && !insideSummary && !insideRail) {
+    taskSidebar.classList.remove('open');
+    summarySidebar.classList.remove('open');
+    syncRailVisibility();
+  }
+});
 
 document.addEventListener('visibilitychange', () => {
   if (!document.hidden) {
