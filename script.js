@@ -275,20 +275,6 @@ tasksRailBtn.addEventListener('click', () => { taskSidebar.classList.toggle('ope
 summaryRailBtn.addEventListener('click', () => { summarySidebar.classList.toggle('open'); taskSidebar.classList.remove('open'); syncRailVisibility(); });
 previewSoundBtn.addEventListener('click', async () => { if (audioCtx.state === 'suspended') await audioCtx.resume(); playAlert(1); });
 
-
-
-document.addEventListener('click', (event) => {
-  const target = event.target;
-  const insideTask = taskSidebar.contains(target);
-  const insideSummary = summarySidebar.contains(target);
-  const insideRail = sideRail.contains(target);
-  if (!insideTask && !insideSummary && !insideRail) {
-    taskSidebar.classList.remove('open');
-    summarySidebar.classList.remove('open');
-    syncRailVisibility();
-  }
-});
-
 document.addEventListener('visibilitychange', () => {
   if (!document.hidden) {
     syncRemainingFromClock();
