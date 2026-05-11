@@ -9,7 +9,10 @@
 <body>
   <main class="app">
     <section class="timer-panel">
-      <h1>Pomodoro Timer</h1>
+      <div class="timer-header">
+        <h1>Pomodoro Timer</h1>
+        <button id="themeToggleBtn" class="ghost-btn" aria-label="Toggle dark mode">🌙 Dark Mode</button>
+      </div>
 
       <div class="session-picker">
         <h2>Session Presets</h2>
@@ -18,6 +21,18 @@
           <button class="preset" data-work="25" data-break="5" aria-pressed="false">25 / 5</button>
           <button class="preset" data-work="90" data-break="20" aria-pressed="false">90 / 20</button>
           <button class="preset" data-work="15" data-break="3" aria-pressed="false">15 / 3</button>
+        </div>
+
+        <div class="custom-session">
+          <label>
+            Focus (min)
+            <input id="customWork" type="number" min="1" max="240" value="40" />
+          </label>
+          <label>
+            Break (min)
+            <input id="customBreak" type="number" min="1" max="120" value="8" />
+          </label>
+          <button id="applyCustomBtn" class="btn secondary">Use Custom</button>
         </div>
       </div>
 
@@ -35,6 +50,12 @@
       <p class="hint">Completed active focus durations:</p>
       <ul id="activityLog" class="log-list"></ul>
       <p id="emptyState" class="empty-state">No completed pomodoro sessions yet.</p>
+
+      <div class="totals">
+        <p>Total Focused Time</p>
+        <strong id="totalFocusedTime">00h 00m 00s</strong>
+        <button id="resetHistoryBtn" class="btn warning">Reset Totals & History</button>
+      </div>
     </aside>
   </main>
 
