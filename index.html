@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pomodoro Focus Timer</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="side-rail">
+    <button id="tasksRailBtn" class="rail-btn" title="Tasks">📝</button>
+    <button id="summaryRailBtn" class="rail-btn" title="Focus Summary">📊</button>
+  </div>
+  <main class="app">
+    <aside class="task-sidebar" id="taskSidebar">
+      <div class="task-shell">
+        <header class="task-sidebar-header"><h2>Tasks</h2></header>
+        <section class="task-panel" id="taskPanel">
+        <h3>Task Planner</h3>
+        <div class="task-create">
+          <input id="taskInput" type="text" maxlength="100" placeholder="Write a task..." />
+          <button id="addTaskBtn" class="btn secondary">Add Task</button>
+        </div>
+        <ul id="taskList" class="task-list"></ul>
+        </section>
+      </div>
+    </aside>
+
+    <aside class="summary-sidebar" id="summarySidebar">
+      <div class="summary-shell">
+        <h2>Focus Heatmap (7 AM - 10 PM)</h2>
+        <div id="heatmapHeader" class="heatmap-header"></div>
+        <div id="heatmapGrid" class="heatmap-grid"></div>
+      </div>
+    </aside>
+
+    <section class="timer-panel">
+      <div class="focus-card" id="focusCard">🎯 No task selected yet</div>
+
+      <div class="timer-header">
+        <h1>Pomodoro Timer</h1>
+        <div class="top-actions">
+          <button id="settingsBtn" class="ghost-btn" aria-label="Open settings">⚙️ Settings</button>
+          <button id="themeToggleBtn" class="ghost-btn" aria-label="Toggle dark mode">🌙 Dark Mode</button>
+        </div>
+      </div>
+
+      <div class="session-picker">
+        <h2>Session Presets</h2>
+        <div class="preset-buttons" role="radiogroup" aria-label="Pomodoro presets">
+          <button class="preset active" data-work="50" data-break="10" aria-pressed="true">50 / 10</button>
+          <button class="preset" data-work="25" data-break="5" aria-pressed="false">25 / 5</button>
+          <button class="preset" data-work="90" data-break="20" aria-pressed="false">90 / 20</button>
+          <button class="preset" data-work="15" data-break="3" aria-pressed="false">15 / 3</button>
+        </div>
+
+        <div class="custom-session">
+          <label>Focus (min)<input id="customWork" type="number" min="1" max="240" value="40" /></label>
+          <label>Break (min)<input id="customBreak" type="number" min="1" max="120" value="8" /></label>
+          <button id="applyCustomBtn" class="btn secondary">Use Custom</button>
+        </div>
+      </div>
+
+      <div class="sound-settings">
+        <label for="soundSelect">Alert sound</label>
+        <select id="soundSelect" aria-label="Choose alert sound">
+          <option value="simple" selected>Simple tone</option>
+          <option value="bell">Bell</option>
+          <option value="chime">Chime</option>
+          <option value="off">Off</option>
+        </select>
+        <button id="previewSoundBtn" class="ghost-btn icon-btn" type="button" aria-label="Preview selected sound" title="Preview sound">🔊</button>
+      </div>
+
+      <p id="modeLabel" class="mode-label">Work Session (50 min)</p>
+      <div id="timerDisplay" class="timer" aria-live="polite">50:00</div>
+      <p id="statusMessage" class="status-message"></p>
+
+      <div class="controls">
+        <button id="startPauseBtn" class="btn primary">Start</button>
+        <button id="stopBtn" class="btn danger">Stop</button>
+      </div>
+    </section>
+
+    <aside class="log-panel">
+        <h2>Pomodoro Activity Log</h2>
+        <p class="hint">Completed active focus durations:</p>
+        <ul id="activityLog" class="log-list"></ul>
+        <p id="emptyState" class="empty-state">No completed pomodoro sessions yet.</p>
+
+        <div class="totals">
+          <p>Total Focused Time</p>
+          <strong id="totalFocusedTime">00h 00m 00s</strong>
+          <button id="resetHistoryBtn" class="btn warning">Reset Totals & History</button>
+        </div>
+    </aside>
+  </main>
+
+  <div id="settingsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="modal-content">
+      <h2 id="settingsTitle">Background Settings</h2>
+      <label class="modal-field">Choose background image
+        <input id="bgImageInput" type="file" accept="image/*" />
+      </label>
+      <div class="modal-field">
+        <span>Or choose preloaded background</span>
+        <div id="preloadedThumbs" class="thumb-grid"></div>
+      </div>
+      <label class="modal-field">Background opacity: <span id="opacityLabel">100%</span>
+        <input id="bgOpacity" type="range" min="0" max="100" value="100" />
+      </label>
+      <div class="modal-actions">
+        <button id="applyBgBtn" class="btn secondary" type="button">Apply</button>
+        <button id="doneSettingsBtn" class="btn primary" type="button">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
