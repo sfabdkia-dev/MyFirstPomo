@@ -27,7 +27,7 @@ let focusedSecondsTotal = 0; let waitingForManualStart = false;
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-const playAlert = () => {
+const playAlert = (times = 1) => {
   const sound = soundSelect.value;
   if (sound === 'off') return;
   const patterns = {
@@ -37,7 +37,8 @@ const playAlert = () => {
   };
 
   let delay = 0;
-  patterns[sound].forEach((freq) => {
+  for (let repeat = 0; repeat < times; repeat += 1) {
+    patterns[sound].forEach((freq) => {
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.type = 'sine';
@@ -49,6 +50,8 @@ const playAlert = () => {
     osc.start(audioCtx.currentTime + delay); osc.stop(audioCtx.currentTime + delay + 0.25);
     delay += 0.18;
   });
+    delay += 0.25;
+  }
 };
 
 const formatTime = (seconds) => `${Math.floor(seconds / 60).toString().padStart(2, '0')}:${(seconds % 60).toString().padStart(2, '0')}`;
@@ -81,7 +84,7 @@ const onSessionFinished = () => {
 
   isWorkMode = !isWorkMode;
   resetCurrentMode();
-  playAlert();
+  playAlert(isWorkMode ? 1 : 2);
   waitingForManualStart = true;
   startPauseBtn.textContent = 'Start';
   statusMessage.textContent = isWorkMode
@@ -131,7 +134,7 @@ themeToggleBtn.addEventListener('click', () => { const darkActive = document.bod
 taskHandle.addEventListener('click', () => { taskSidebar.classList.toggle('open'); });
 previewSoundBtn.addEventListener('click', async () => {
   if (audioCtx.state === 'suspended') await audioCtx.resume();
-  playAlert();
+  playAlert(1);
 });
 
 addTaskBtn.addEventListener('click', () => {

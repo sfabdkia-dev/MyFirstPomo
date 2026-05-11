@@ -9,8 +9,8 @@
 <body>
   <main class="app">
     <aside class="task-sidebar" id="taskSidebar">
+      <button id="taskHandle" class="task-handle" aria-label="Open or close task panel" title="Tasks">📝</button>
       <div class="task-shell">
-        <button id="taskHandle" class="task-handle" aria-label="Open or close task panel" title="Tasks">📝</button>
         <header class="task-sidebar-header"><h2>Tasks</h2></header>
         <section class="task-panel" id="taskPanel">
         <h3>Task Planner</h3>
@@ -57,7 +57,7 @@
           <option value="chime">Chime</option>
           <option value="off">Off</option>
         </select>
-        <button id="previewSoundBtn" class="ghost-btn" type="button">▶ Preview</button>
+        <button id="previewSoundBtn" class="ghost-btn icon-btn" type="button" aria-label="Preview selected sound" title="Preview sound">🔊</button>
       </div>
 
       <p id="modeLabel" class="mode-label">Work Session (50 min)</p>
