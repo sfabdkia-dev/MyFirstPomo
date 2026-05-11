@@ -12,8 +12,10 @@ const bgOpacity = document.getElementById('bgOpacity');
 const opacityLabel = document.getElementById('opacityLabel');
 const applyBgBtn = document.getElementById('applyBgBtn');
 const doneSettingsBtn = document.getElementById('doneSettingsBtn');
+const preloadedThumbs = document.getElementById('preloadedThumbs');
 const tasksRailBtn = document.getElementById('tasksRailBtn');
 const summaryRailBtn = document.getElementById('summaryRailBtn');
+const sideRail = document.querySelector('.side-rail');
 const taskSidebar = document.getElementById('taskSidebar');
 const summarySidebar = document.getElementById('summarySidebar');
 const heatmapHeader = document.getElementById('heatmapHeader');
@@ -40,6 +42,35 @@ let targetEndTimestampMs = null; let lastPerfNow = null;
 let bgImageData = null;
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+const preloadedImageNames = ['bg1.jpg', 'bg2.jpg', 'bg3.jpg', 'bg4.jpg'];
+
+const renderPreloadedThumbs = () => {
+  preloadedThumbs.innerHTML = '';
+  preloadedImageNames.forEach((name) => {
+    const item = document.createElement('button');
+    item.type = 'button';
+    item.className = 'thumb-item';
+    const img = document.createElement('img');
+    const url = `assets/backgrounds/${name}`;
+    img.src = url;
+    img.alt = name;
+    img.onerror = () => { item.style.display = 'none'; };
+    item.appendChild(img);
+    item.addEventListener('click', () => {
+      preloadedThumbs.querySelectorAll('.thumb-item').forEach((el) => el.classList.remove('active'));
+      item.classList.add('active');
+      bgImageData = url;
+    });
+    preloadedThumbs.appendChild(item);
+  });
+};
+
+const syncRailVisibility = () => {
+  const hide = taskSidebar.classList.contains('open') || summarySidebar.classList.contains('open');
+  sideRail.classList.toggle('hidden', hide);
+};
+
 
 const playAlert = (times = 1) => {
   const sound = soundSelect.value;
@@ -113,6 +144,8 @@ const addLogEntry = (secondsFocused) => {
   focusedSecondsTotal += secondsFocused;
   updateFocusedTotal();
 renderHeatmap();
+renderPreloadedThumbs();
+syncRailVisibility();
   const item = document.createElement('li');
   item.textContent = `${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - Focused ${Math.floor(secondsFocused / 60)}m ${secondsFocused % 60}s`;
   activityLog.prepend(item);
@@ -234,10 +267,12 @@ presets.forEach((button) => button.addEventListener('click', () => {
 }));
 
 resetHistoryBtn.addEventListener('click', () => { focusedSecondsTotal = 0; activityLog.innerHTML = ''; emptyState.classList.remove('hidden'); updateFocusedTotal();
-renderHeatmap(); });
+renderHeatmap();
+renderPreloadedThumbs();
+syncRailVisibility(); });
 themeToggleBtn.addEventListener('click', () => { const darkActive = document.body.classList.toggle('dark'); themeToggleBtn.textContent = darkActive ? '☀️ Light Mode' : '🌙 Dark Mode'; });
-tasksRailBtn.addEventListener('click', () => { taskSidebar.classList.toggle('open'); summarySidebar.classList.remove('open'); });
-summaryRailBtn.addEventListener('click', () => { summarySidebar.classList.toggle('open'); taskSidebar.classList.remove('open'); });
+tasksRailBtn.addEventListener('click', () => { taskSidebar.classList.toggle('open'); summarySidebar.classList.remove('open'); syncRailVisibility(); });
+summaryRailBtn.addEventListener('click', () => { summarySidebar.classList.toggle('open'); taskSidebar.classList.remove('open'); syncRailVisibility(); });
 previewSoundBtn.addEventListener('click', async () => { if (audioCtx.state === 'suspended') await audioCtx.resume(); playAlert(1); });
 
 document.addEventListener('visibilitychange', () => {
@@ -288,3 +323,5 @@ bgImageInput.addEventListener('change', () => {
 updateDisplay();
 updateFocusedTotal();
 renderHeatmap();
+renderPreloadedThumbs();
+syncRailVisibility();
