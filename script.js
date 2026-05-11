@@ -10,6 +10,8 @@ const settingsModal = document.getElementById('settingsModal');
 const bgImageInput = document.getElementById('bgImageInput');
 const bgOpacity = document.getElementById('bgOpacity');
 const opacityLabel = document.getElementById('opacityLabel');
+const columnOpacity = document.getElementById('columnOpacity');
+const columnOpacityLabel = document.getElementById('columnOpacityLabel');
 const applyBgBtn = document.getElementById('applyBgBtn');
 const doneSettingsBtn = document.getElementById('doneSettingsBtn');
 const preloadedThumbs = document.getElementById('preloadedThumbs');
@@ -42,7 +44,7 @@ let totalSeconds = workMinutes * 60; let remainingSeconds = totalSeconds;
 let isRunning = false; let intervalId = null;
 let focusedSecondsTotal = 0; let waitingForManualStart = false;
 let targetEndTimestampMs = null; let lastPerfNow = null;
-let bgImageData = null;
+let bgImageData = 'assets/backgrounds/bg1.jpg';
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -72,6 +74,11 @@ const renderPreloadedThumbs = () => {
 const syncRailVisibility = () => {
   const hide = taskSidebar.classList.contains('open') || summarySidebar.classList.contains('open');
   sideRail.classList.toggle('hidden', hide);
+};
+
+const setSidebarState = (sidebar, isOpen) => {
+  sidebar.classList.toggle('open', isOpen);
+  sidebar.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
 };
 
 
@@ -280,8 +287,18 @@ renderHeatmap();
 renderPreloadedThumbs();
 syncRailVisibility(); });
 themeToggleBtn.addEventListener('click', () => { const darkActive = document.body.classList.toggle('dark'); themeToggleBtn.textContent = darkActive ? '☀️ Light Mode' : '🌙 Dark Mode'; });
-tasksRailBtn.addEventListener('click', () => { taskSidebar.classList.toggle('open'); summarySidebar.classList.remove('open'); syncRailVisibility(); });
-summaryRailBtn.addEventListener('click', () => { summarySidebar.classList.toggle('open'); taskSidebar.classList.remove('open'); syncRailVisibility(); });
+tasksRailBtn.addEventListener('click', () => {
+  const willOpen = !taskSidebar.classList.contains('open');
+  setSidebarState(taskSidebar, willOpen);
+  setSidebarState(summarySidebar, false);
+  syncRailVisibility();
+});
+summaryRailBtn.addEventListener('click', () => {
+  const willOpen = !summarySidebar.classList.contains('open');
+  setSidebarState(summarySidebar, willOpen);
+  setSidebarState(taskSidebar, false);
+  syncRailVisibility();
+});
 previewSoundBtn.addEventListener('click', async () => { if (audioCtx.state === 'suspended') await audioCtx.resume(); playAlert(1); });
 
 
@@ -292,8 +309,8 @@ document.addEventListener('pointerdown', (event) => {
   const insideSummary = target.closest('#summarySidebar');
   const insideRail = target.closest('.side-rail');
   if (!insideTask && !insideSummary && !insideRail) {
-    taskSidebar.classList.remove('open');
-    summarySidebar.classList.remove('open');
+    setSidebarState(taskSidebar, false);
+    setSidebarState(summarySidebar, false);
     syncRailVisibility();
   }
 });
@@ -324,10 +341,15 @@ doneSettingsBtn.addEventListener('click', () => settingsModal.classList.add('hid
 bgOpacity.addEventListener('input', () => {
   opacityLabel.textContent = `${bgOpacity.value}%`;
 });
+columnOpacity.addEventListener('input', () => {
+  columnOpacityLabel.textContent = `${columnOpacity.value}%`;
+});
 
 applyBgBtn.addEventListener('click', () => {
   const opacity = Number(bgOpacity.value) / 100;
+  const panelAlpha = Number(columnOpacity.value) / 100;
   document.body.style.setProperty('--custom-bg-opacity', opacity.toString());
+  document.body.style.setProperty('--panel-alpha', (panelAlpha * 0.75).toString());
   if (bgImageData) {
     document.body.style.setProperty('--custom-bg-image', `url(${bgImageData})`);
   }
@@ -347,4 +369,8 @@ updateDisplay();
 updateFocusedTotal();
 renderHeatmap();
 renderPreloadedThumbs();
+document.body.style.setProperty('--custom-bg-image', `url(${bgImageData})`);
+document.body.style.setProperty('--custom-bg-opacity', '1');
+setSidebarState(taskSidebar, false);
+setSidebarState(summarySidebar, false);
 syncRailVisibility();
