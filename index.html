@@ -9,15 +9,17 @@
 <body>
   <main class="app">
     <aside class="task-sidebar" id="taskSidebar">
-      <button id="taskHandle" class="task-handle" aria-label="Open or close task panel">📝 Tasks</button>
-      <section class="task-panel" id="taskPanel">
+      <div class="task-shell">
+        <button id="taskHandle" class="task-handle" aria-label="Open or close task panel">📝 Tasks</button>
+        <section class="task-panel" id="taskPanel">
         <h2>Task Planner</h2>
         <div class="task-create">
           <input id="taskInput" type="text" maxlength="100" placeholder="Write a task..." />
           <button id="addTaskBtn" class="btn secondary">Add Task</button>
         </div>
         <ul id="taskList" class="task-list"></ul>
-      </section>
+        </section>
+      </div>
     </aside>
 
     <section class="timer-panel">
@@ -54,6 +56,7 @@
           <option value="chime">Chime</option>
           <option value="off">Off</option>
         </select>
+        <button id="previewSoundBtn" class="ghost-btn" type="button">▶ Preview</button>
       </div>
 
       <p id="modeLabel" class="mode-label">Work Session (50 min)</p>

@@ -11,6 +11,7 @@ const applyCustomBtn = document.getElementById('applyCustomBtn');
 const customWorkInput = document.getElementById('customWork');
 const customBreakInput = document.getElementById('customBreak');
 const soundSelect = document.getElementById('soundSelect');
+const previewSoundBtn = document.getElementById('previewSoundBtn');
 const totalFocusedTime = document.getElementById('totalFocusedTime');
 const presets = document.querySelectorAll('.preset');
 const activityLog = document.getElementById('activityLog');
@@ -128,6 +129,10 @@ presets.forEach((button) => button.addEventListener('click', () => {
 resetHistoryBtn.addEventListener('click', () => { focusedSecondsTotal = 0; activityLog.innerHTML = ''; emptyState.classList.remove('hidden'); updateFocusedTotal(); });
 themeToggleBtn.addEventListener('click', () => { const darkActive = document.body.classList.toggle('dark'); themeToggleBtn.textContent = darkActive ? '☀️ Light Mode' : '🌙 Dark Mode'; });
 taskHandle.addEventListener('click', () => { taskSidebar.classList.toggle('open'); });
+previewSoundBtn.addEventListener('click', async () => {
+  if (audioCtx.state === 'suspended') await audioCtx.resume();
+  playAlert();
+});
 
 addTaskBtn.addEventListener('click', () => {
   const taskText = taskInput.value.trim();
