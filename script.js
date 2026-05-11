@@ -6,7 +6,7 @@ const stopBtn = document.getElementById('stopBtn');
 const resetHistoryBtn = document.getElementById('resetHistoryBtn');
 const themeToggleBtn = document.getElementById('themeToggleBtn');
 const taskSidebarToggle = document.getElementById('taskSidebarToggle');
-const rightPanel = document.getElementById('rightPanel');
+const taskSidebar = document.getElementById('taskSidebar');
 const applyCustomBtn = document.getElementById('applyCustomBtn');
 const customWorkInput = document.getElementById('customWork');
 const customBreakInput = document.getElementById('customBreak');
@@ -127,7 +127,7 @@ presets.forEach((button) => button.addEventListener('click', () => {
 
 resetHistoryBtn.addEventListener('click', () => { focusedSecondsTotal = 0; activityLog.innerHTML = ''; emptyState.classList.remove('hidden'); updateFocusedTotal(); });
 themeToggleBtn.addEventListener('click', () => { const darkActive = document.body.classList.toggle('dark'); themeToggleBtn.textContent = darkActive ? '☀️ Light Mode' : '🌙 Dark Mode'; });
-taskSidebarToggle.addEventListener('click', () => { rightPanel.classList.toggle('hidden'); });
+taskSidebarToggle.addEventListener('click', () => { taskSidebar.classList.toggle('hidden'); });
 
 addTaskBtn.addEventListener('click', () => {
   const taskText = taskInput.value.trim();

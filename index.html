@@ -8,6 +8,17 @@
 </head>
 <body>
   <main class="app">
+    <aside class="task-sidebar" id="taskSidebar">
+      <section class="task-panel" id="taskPanel">
+        <h2>Task Planner</h2>
+        <div class="task-create">
+          <input id="taskInput" type="text" maxlength="100" placeholder="Write a task..." />
+          <button id="addTaskBtn" class="btn secondary">Add Task</button>
+        </div>
+        <ul id="taskList" class="task-list"></ul>
+      </section>
+    </aside>
+
     <section class="timer-panel">
       <div class="focus-card" id="focusCard">🎯 No task selected yet</div>
 
@@ -15,7 +26,7 @@
         <h1>Pomodoro Timer</h1>
         <div class="top-actions">
           <button id="themeToggleBtn" class="ghost-btn" aria-label="Toggle dark mode">🌙 Dark Mode</button>
-          <button id="taskSidebarToggle" class="ghost-btn" aria-label="Show or hide task sidebar">📝 Tasks</button>
+          <button id="taskSidebarToggle" class="ghost-btn" aria-label="Show or hide task sidebar">📝 Toggle Tasks</button>
         </div>
       </div>
 
@@ -55,17 +66,7 @@
       </div>
     </section>
 
-    <aside class="right-panel" id="rightPanel">
-      <section class="task-panel" id="taskPanel">
-        <h2>Task Planner</h2>
-        <div class="task-create">
-          <input id="taskInput" type="text" maxlength="100" placeholder="Write a task..." />
-          <button id="addTaskBtn" class="btn secondary">Add Task</button>
-        </div>
-        <ul id="taskList" class="task-list"></ul>
-      </section>
-
-      <section class="log-panel">
+    <aside class="log-panel">
         <h2>Pomodoro Activity Log</h2>
         <p class="hint">Completed active focus durations:</p>
         <ul id="activityLog" class="log-list"></ul>
@@ -76,7 +77,6 @@
           <strong id="totalFocusedTime">00h 00m 00s</strong>
           <button id="resetHistoryBtn" class="btn warning">Reset Totals & History</button>
         </div>
-      </section>
     </aside>
   </main>
 
