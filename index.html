@@ -54,11 +54,7 @@
           <button class="preset" data-work="15" data-break="3" aria-pressed="false">15 / 3</button>
         </div>
 
-        <div class="custom-session">
-          <label>Focus (min)<input id="customWork" type="number" min="1" max="240" value="40" /></label>
-          <label>Break (min)<input id="customBreak" type="number" min="1" max="120" value="8" /></label>
-          <button id="applyCustomBtn" class="btn secondary">Use Custom</button>
-        </div>
+          <button class="preset" id="customPresetChip" type="button" aria-pressed="false">Custom</button>
       </div>
 
       <div class="sound-settings">
@@ -95,6 +91,23 @@
         </div>
     </aside>
   </main>
+
+  
+  <div id="customTimeModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="customTimeTitle">
+    <div class="modal-content">
+      <h2 id="customTimeTitle">Custom Session</h2>
+      <label class="modal-field">Focus (min)
+        <input id="customWork" type="number" min="1" max="240" value="40" />
+      </label>
+      <label class="modal-field">Break (min)
+        <input id="customBreak" type="number" min="1" max="120" value="8" />
+      </label>
+      <div class="modal-actions">
+        <button id="applyCustomBtn" class="btn secondary" type="button">Apply</button>
+        <button id="closeCustomTimeBtn" class="btn primary" type="button">Done</button>
+      </div>
+    </div>
+  </div>
 
   <div id="settingsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <div class="modal-content">
