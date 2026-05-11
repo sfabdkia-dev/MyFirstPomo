@@ -5,6 +5,13 @@ const startPauseBtn = document.getElementById('startPauseBtn');
 const stopBtn = document.getElementById('stopBtn');
 const resetHistoryBtn = document.getElementById('resetHistoryBtn');
 const themeToggleBtn = document.getElementById('themeToggleBtn');
+const settingsBtn = document.getElementById('settingsBtn');
+const settingsModal = document.getElementById('settingsModal');
+const bgImageInput = document.getElementById('bgImageInput');
+const bgOpacity = document.getElementById('bgOpacity');
+const opacityLabel = document.getElementById('opacityLabel');
+const applyBgBtn = document.getElementById('applyBgBtn');
+const doneSettingsBtn = document.getElementById('doneSettingsBtn');
 const taskHandle = document.getElementById('taskHandle');
 const taskSidebar = document.getElementById('taskSidebar');
 const applyCustomBtn = document.getElementById('applyCustomBtn');
@@ -21,35 +28,33 @@ const taskInput = document.getElementById('taskInput');
 const taskList = document.getElementById('taskList');
 const focusCard = document.getElementById('focusCard');
 
-let workMinutes = 50; let breakMinutes = 10; let isWorkMode = true; let totalSeconds = workMinutes * 60;
-let remainingSeconds = totalSeconds; let isRunning = false; let intervalId = null; let workSessionStart = null;
+let workMinutes = 50; let breakMinutes = 10; let isWorkMode = true;
+let totalSeconds = workMinutes * 60; let remainingSeconds = totalSeconds;
+let isRunning = false; let intervalId = null;
 let focusedSecondsTotal = 0; let waitingForManualStart = false;
+let targetEndTimestampMs = null; let lastPerfNow = null;
+let bgImageData = null;
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 const playAlert = (times = 1) => {
   const sound = soundSelect.value;
   if (sound === 'off') return;
-  const patterns = {
-    simple: [660],
-    bell: [900, 650],
-    chime: [700, 900, 1200]
-  };
-
+  const patterns = { simple: [660], bell: [900, 650], chime: [700, 900, 1200] };
   let delay = 0;
   for (let repeat = 0; repeat < times; repeat += 1) {
     patterns[sound].forEach((freq) => {
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.type = 'sine';
-    osc.frequency.value = freq;
-    gain.gain.setValueAtTime(0.0001, audioCtx.currentTime + delay);
-    gain.gain.exponentialRampToValueAtTime(0.2, audioCtx.currentTime + delay + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + delay + 0.22);
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.start(audioCtx.currentTime + delay); osc.stop(audioCtx.currentTime + delay + 0.25);
-    delay += 0.18;
-  });
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, audioCtx.currentTime + delay);
+      gain.gain.exponentialRampToValueAtTime(0.2, audioCtx.currentTime + delay + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + delay + 0.22);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(audioCtx.currentTime + delay); osc.stop(audioCtx.currentTime + delay + 0.25);
+      delay += 0.18;
+    });
     delay += 0.25;
   }
 };
@@ -57,29 +62,36 @@ const playAlert = (times = 1) => {
 const formatTime = (seconds) => `${Math.floor(seconds / 60).toString().padStart(2, '0')}:${(seconds % 60).toString().padStart(2, '0')}`;
 const formatDuration = (seconds) => `${Math.floor(seconds / 3600).toString().padStart(2, '0')}h ${Math.floor((seconds % 3600) / 60).toString().padStart(2, '0')}m ${(seconds % 60).toString().padStart(2, '0')}s`;
 
-const updateDisplay = () => { timerDisplay.textContent = formatTime(remainingSeconds); modeLabel.textContent = isWorkMode ? `Work Session (${workMinutes} min)` : `Break Session (${breakMinutes} min)`; };
+const updateDisplay = () => {
+  timerDisplay.textContent = formatTime(remainingSeconds);
+  modeLabel.textContent = isWorkMode ? `Work Session (${workMinutes} min)` : `Break Session (${breakMinutes} min)`;
+};
+
 const updateFocusedTotal = () => { totalFocusedTime.textContent = formatDuration(focusedSecondsTotal); };
 const resetCurrentMode = () => { totalSeconds = (isWorkMode ? workMinutes : breakMinutes) * 60; remainingSeconds = totalSeconds; updateDisplay(); };
 
 const addLogEntry = (secondsFocused) => {
-  focusedSecondsTotal += secondsFocused; updateFocusedTotal();
+  focusedSecondsTotal += secondsFocused;
+  updateFocusedTotal();
   const item = document.createElement('li');
   item.textContent = `${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - Focused ${Math.floor(secondsFocused / 60)}m ${secondsFocused % 60}s`;
-  activityLog.prepend(item); emptyState.classList.add('hidden');
+  activityLog.prepend(item);
+  emptyState.classList.add('hidden');
 };
 
-const stopTimer = ({ keepMode = true } = {}) => {
-  clearInterval(intervalId); intervalId = null; isRunning = false; waitingForManualStart = false; startPauseBtn.textContent = 'Start'; statusMessage.textContent = '';
-  if (!keepMode) isWorkMode = true;
-  workSessionStart = null; resetCurrentMode();
+const clearRunningInterval = () => {
+  clearInterval(intervalId);
+  intervalId = null;
+  targetEndTimestampMs = null;
+  lastPerfNow = null;
 };
 
 const onSessionFinished = () => {
-  clearInterval(intervalId); intervalId = null; isRunning = false;
-  if (isWorkMode && workSessionStart !== null) {
-    const focusedSeconds = totalSeconds - remainingSeconds;
-    if (focusedSeconds > 0) addLogEntry(focusedSeconds);
-    workSessionStart = null;
+  clearRunningInterval();
+  isRunning = false;
+
+  if (isWorkMode) {
+    addLogEntry(totalSeconds);
   }
 
   isWorkMode = !isWorkMode;
@@ -92,28 +104,71 @@ const onSessionFinished = () => {
     : 'Focus finished. Press Start when ready for break.';
 };
 
-const tick = () => {
-  if (remainingSeconds > 0) { remainingSeconds -= 1; updateDisplay(); return; }
-  onSessionFinished();
+const syncRemainingFromClock = () => {
+  if (!isRunning || targetEndTimestampMs === null) return;
+  const nowMs = Date.now();
+  const remainingMs = Math.max(0, targetEndTimestampMs - nowMs);
+  const nextSeconds = Math.ceil(remainingMs / 1000);
+  if (nextSeconds !== remainingSeconds) {
+    remainingSeconds = nextSeconds;
+    updateDisplay();
+  }
+  if (remainingMs <= 0) onSessionFinished();
+};
+
+const startAccurateTimer = () => {
+  const nowDateMs = Date.now();
+  const perfNow = performance.now();
+  targetEndTimestampMs = nowDateMs + remainingSeconds * 1000;
+  lastPerfNow = perfNow;
+
+  intervalId = setInterval(() => {
+    const perfDelta = performance.now() - lastPerfNow;
+    lastPerfNow = performance.now();
+    if (perfDelta > 1500) {
+      syncRemainingFromClock();
+      return;
+    }
+    syncRemainingFromClock();
+  }, 250);
+};
+
+const stopTimer = ({ keepMode = true } = {}) => {
+  clearRunningInterval();
+  isRunning = false;
+  waitingForManualStart = false;
+  startPauseBtn.textContent = 'Start';
+  statusMessage.textContent = '';
+  if (!keepMode) isWorkMode = true;
+  resetCurrentMode();
 };
 
 const setPresetState = (activeButton = null) => presets.forEach((preset) => {
-  const isActive = preset === activeButton; preset.classList.toggle('active', isActive); preset.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+  const isActive = preset === activeButton;
+  preset.classList.toggle('active', isActive);
+  preset.setAttribute('aria-pressed', isActive ? 'true' : 'false');
 });
 
 startPauseBtn.addEventListener('click', async () => {
   if (audioCtx.state === 'suspended') await audioCtx.resume();
   if (!isRunning) {
-    isRunning = true; waitingForManualStart = false; statusMessage.textContent = ''; startPauseBtn.textContent = 'Pause';
-    if (isWorkMode && workSessionStart === null) workSessionStart = Date.now();
-    intervalId = setInterval(tick, 1000); return;
+    isRunning = true;
+    waitingForManualStart = false;
+    statusMessage.textContent = '';
+    startPauseBtn.textContent = 'Pause';
+    startAccurateTimer();
+    return;
   }
-  isRunning = false; startPauseBtn.textContent = 'Start'; clearInterval(intervalId); intervalId = null;
+  syncRemainingFromClock();
+  clearRunningInterval();
+  isRunning = false;
+  startPauseBtn.textContent = 'Start';
 });
 
 stopBtn.addEventListener('click', () => {
-  if (isWorkMode && workSessionStart !== null) {
-    const focusedSeconds = totalSeconds - remainingSeconds;
+  if (isWorkMode && isRunning) {
+    syncRemainingFromClock();
+    const focusedSeconds = Math.max(0, totalSeconds - remainingSeconds);
     if (focusedSeconds > 0) addLogEntry(focusedSeconds);
   }
   stopTimer({ keepMode: false });
@@ -132,9 +187,12 @@ presets.forEach((button) => button.addEventListener('click', () => {
 resetHistoryBtn.addEventListener('click', () => { focusedSecondsTotal = 0; activityLog.innerHTML = ''; emptyState.classList.remove('hidden'); updateFocusedTotal(); });
 themeToggleBtn.addEventListener('click', () => { const darkActive = document.body.classList.toggle('dark'); themeToggleBtn.textContent = darkActive ? '☀️ Light Mode' : '🌙 Dark Mode'; });
 taskHandle.addEventListener('click', () => { taskSidebar.classList.toggle('open'); });
-previewSoundBtn.addEventListener('click', async () => {
-  if (audioCtx.state === 'suspended') await audioCtx.resume();
-  playAlert(1);
+previewSoundBtn.addEventListener('click', async () => { if (audioCtx.state === 'suspended') await audioCtx.resume(); playAlert(1); });
+
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) {
+    syncRemainingFromClock();
+  }
 });
 
 addTaskBtn.addEventListener('click', () => {
@@ -151,4 +209,30 @@ addTaskBtn.addEventListener('click', () => {
   li.appendChild(btn); taskList.appendChild(li); taskInput.value = '';
 });
 
-updateDisplay(); updateFocusedTotal();
+settingsBtn.addEventListener('click', () => settingsModal.classList.remove('hidden'));
+doneSettingsBtn.addEventListener('click', () => settingsModal.classList.add('hidden'));
+
+bgOpacity.addEventListener('input', () => {
+  opacityLabel.textContent = `${bgOpacity.value}%`;
+});
+
+applyBgBtn.addEventListener('click', () => {
+  const opacity = Number(bgOpacity.value) / 100;
+  document.body.style.setProperty('--custom-bg-opacity', opacity.toString());
+  if (bgImageData) {
+    document.body.style.setProperty('--custom-bg-image', `url(${bgImageData})`);
+  }
+});
+
+bgImageInput.addEventListener('change', () => {
+  const file = bgImageInput.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    bgImageData = event.target?.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+updateDisplay();
+updateFocusedTotal();

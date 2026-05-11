@@ -29,8 +29,9 @@
       <div class="timer-header">
         <h1>Pomodoro Timer</h1>
         <div class="top-actions">
+          <button id="settingsBtn" class="ghost-btn" aria-label="Open settings">⚙️ Settings</button>
           <button id="themeToggleBtn" class="ghost-btn" aria-label="Toggle dark mode">🌙 Dark Mode</button>
-                  </div>
+        </div>
       </div>
 
       <div class="session-picker">
@@ -83,6 +84,22 @@
         </div>
     </aside>
   </main>
+
+  <div id="settingsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="modal-content">
+      <h2 id="settingsTitle">Background Settings</h2>
+      <label class="modal-field">Choose background image
+        <input id="bgImageInput" type="file" accept="image/*" />
+      </label>
+      <label class="modal-field">Background opacity: <span id="opacityLabel">100%</span>
+        <input id="bgOpacity" type="range" min="0" max="100" value="100" />
+      </label>
+      <div class="modal-actions">
+        <button id="applyBgBtn" class="btn secondary" type="button">Apply</button>
+        <button id="doneSettingsBtn" class="btn primary" type="button">Done</button>
+      </div>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
