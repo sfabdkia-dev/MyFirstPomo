@@ -36,7 +36,7 @@ input,select{border-radius:10px;border:1px solid var(--border);padding:.55rem .6
 .summary-shell{height:100%;width:max-content;border:1px solid var(--border);background:color-mix(in srgb,var(--panel) 98%, #ffffff);border-radius:20px;padding:.8rem;padding-right:calc(.8rem + 30px);overflow-y:auto;overflow-x:hidden}
 .heatmap-header{display:grid;grid-template-columns:60px repeat(30,13px);gap:4px;margin:.6rem 0;align-items:center}.heatmap-header span{font-size:.55rem;color:var(--muted);text-align:center}
 .heatmap-grid{display:grid;gap:6px}.heatmap-row{display:grid;grid-template-columns:60px repeat(30,13px);gap:4px;align-items:center}.heatmap-day{font-size:.7rem;color:var(--muted)}
-.heatmap-cell{width:13px;height:13px;border-radius:2px;background:rgba(203,213,225,var(--heatmap-cell-alpha))}.heatmap-level-1{background:rgba(186,230,253,var(--heatmap-cell-alpha))}.heatmap-level-2{background:rgba(56,189,248,var(--heatmap-cell-alpha))}.heatmap-level-3{background:rgba(2,132,199,var(--heatmap-cell-alpha))}.heatmap-level-4{background:rgba(7,89,133,var(--heatmap-cell-alpha))}
+.heatmap-cell{width:13px;height:13px;border-radius:2px;background:#94a3b8;border:1px solid rgba(15,23,42,.28)}.heatmap-level-1{background:#7dd3fc}.heatmap-level-2{background:#38bdf8}.heatmap-level-3{background:#0284c7}.heatmap-level-4{background:#075985}
 
 .side-rail.hidden{opacity:0;pointer-events:none}
 
