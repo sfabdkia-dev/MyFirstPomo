@@ -220,6 +220,7 @@ const clearRunningInterval = () => {
 const onSessionFinished = () => {
   clearRunningInterval();
   isRunning = false;
+  setPresetButtonsDisabled(false);
 
   if (isWorkMode) {
     addLogEntry(totalSeconds);
@@ -269,6 +270,7 @@ const stopTimer = ({ keepMode = true } = {}) => {
   isRunning = false;
   waitingForManualStart = false;
   startPauseBtn.textContent = 'Start';
+  setPresetButtonsDisabled(false);
   statusMessage.textContent = '';
   if (!keepMode) isWorkMode = true;
   resetCurrentMode();
@@ -280,6 +282,12 @@ const setPresetState = (activeButton = null) => presets.forEach((preset) => {
   preset.setAttribute('aria-pressed', isActive ? 'true' : 'false');
 });
 
+const setPresetButtonsDisabled = (isDisabled) => {
+  [...presets, customPresetChip].forEach((button) => {
+    button.disabled = isDisabled;
+  });
+};
+
 startPauseBtn.addEventListener('click', async () => {
   if (audioCtx.state === 'suspended') await audioCtx.resume();
   if (!isRunning) {
@@ -287,6 +295,7 @@ startPauseBtn.addEventListener('click', async () => {
     waitingForManualStart = false;
     statusMessage.textContent = '';
     startPauseBtn.textContent = 'Pause';
+    setPresetButtonsDisabled(true);
     startAccurateTimer();
     return;
   }
@@ -294,6 +303,7 @@ startPauseBtn.addEventListener('click', async () => {
   clearRunningInterval();
   isRunning = false;
   startPauseBtn.textContent = 'Start';
+  setPresetButtonsDisabled(false);
 });
 
 stopBtn.addEventListener('click', () => {
@@ -315,6 +325,7 @@ applyCustomBtn.addEventListener('click', () => {
 });
 
 presets.forEach((button) => button.addEventListener('click', () => {
+  if (button === customPresetChip) return;
   setPresetState(button); customPresetChip.classList.remove('active'); workMinutes = Number(button.dataset.work); breakMinutes = Number(button.dataset.break); isWorkMode = true; stopTimer({ keepMode: true });
 }));
 
