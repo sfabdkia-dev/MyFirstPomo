@@ -152,7 +152,6 @@ const updateFocusedTotal = () => { totalFocusedTime.textContent = formatDuration
 const resetCurrentMode = () => { totalSeconds = (isWorkMode ? workMinutes : breakMinutes) * 60; remainingSeconds = totalSeconds; updateDisplay(); };
 
 const dailyFocus = {};
-let lastFocusTickMs = null;
 
 const slotKeyFromDate = (dateObj) => {
   const h = dateObj.getHours();
@@ -180,8 +179,7 @@ const renderHeatmap = () => {
     const row = document.createElement('div'); row.className = 'heatmap-row';
     const label = document.createElement('div'); label.className = 'heatmap-day'; label.textContent = key.slice(5); row.appendChild(label);
     for (let slot = 0; slot < 30; slot += 1) {
-      const secondsInSlot = dailyFocus[key]?.[slot] || 0;
-      const v = Math.round(secondsInSlot / 60);
+      const v = dailyFocus[key]?.[slot] || 0;
       const cell = document.createElement('div');
       let level = 0; if (v > 0) level = 1; if (v >= 10) level = 2; if (v >= 20) level = 3; if (v >= 30) level = 4;
       cell.className = `heatmap-cell ${level ? `heatmap-level-${level}` : ''}`;
@@ -194,33 +192,21 @@ const renderHeatmap = () => {
 const addLogEntry = (secondsFocused) => {
   focusedSecondsTotal += secondsFocused;
   updateFocusedTotal();
+renderHeatmap();
+renderPreloadedThumbs();
+syncRailVisibility();
   const item = document.createElement('li');
   item.textContent = `${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - Focused ${Math.floor(secondsFocused / 60)}m ${secondsFocused % 60}s`;
   activityLog.prepend(item);
   emptyState.classList.add('hidden');
 
-  renderHeatmap();
-};
-
-const recordLiveFocus = () => {
-  if (!isRunning || !isWorkMode) {
-    lastFocusTickMs = Date.now();
-    return;
-  }
-  const nowMs = Date.now();
-  if (lastFocusTickMs === null) {
-    lastFocusTickMs = nowMs;
-    return;
-  }
-  const deltaSeconds = Math.floor((nowMs - lastFocusTickMs) / 1000);
-  if (deltaSeconds <= 0) return;
-  lastFocusTickMs += deltaSeconds * 1000;
   const now = new Date();
   const key = dateKey(now);
   const slot = slotKeyFromDate(now);
-  if (slot === null) return;
-  if (!dailyFocus[key]) dailyFocus[key] = {};
-  dailyFocus[key][slot] = (dailyFocus[key][slot] || 0) + deltaSeconds;
+  if (slot !== null) {
+    if (!dailyFocus[key]) dailyFocus[key] = {};
+    dailyFocus[key][slot] = (dailyFocus[key][slot] || 0) + Math.round(secondsFocused / 60);
+  }
   renderHeatmap();
 };
 
@@ -232,7 +218,6 @@ const clearRunningInterval = () => {
 };
 
 const onSessionFinished = () => {
-  recordLiveFocus();
   clearRunningInterval();
   isRunning = false;
   setPresetButtonsDisabled(false);
@@ -272,7 +257,6 @@ const startAccurateTimer = () => {
   intervalId = setInterval(() => {
     const perfDelta = performance.now() - lastPerfNow;
     lastPerfNow = performance.now();
-    recordLiveFocus();
     if (perfDelta > 1500) {
       syncRemainingFromClock();
       return;
@@ -282,7 +266,6 @@ const startAccurateTimer = () => {
 };
 
 const stopTimer = ({ keepMode = true } = {}) => {
-  recordLiveFocus();
   clearRunningInterval();
   isRunning = false;
   waitingForManualStart = false;
@@ -313,11 +296,9 @@ startPauseBtn.addEventListener('click', async () => {
     statusMessage.textContent = '';
     startPauseBtn.textContent = 'Pause';
     setPresetButtonsDisabled(true);
-    lastFocusTickMs = Date.now();
     startAccurateTimer();
     return;
   }
-  recordLiveFocus();
   syncRemainingFromClock();
   clearRunningInterval();
   isRunning = false;
@@ -348,7 +329,10 @@ presets.forEach((button) => button.addEventListener('click', () => {
   setPresetState(button); customPresetChip.classList.remove('active'); workMinutes = Number(button.dataset.work); breakMinutes = Number(button.dataset.break); isWorkMode = true; stopTimer({ keepMode: true });
 }));
 
-resetHistoryBtn.addEventListener('click', () => { focusedSecondsTotal = 0; activityLog.innerHTML = ''; emptyState.classList.remove('hidden'); Object.keys(dailyFocus).forEach((key) => delete dailyFocus[key]); updateFocusedTotal(); renderHeatmap(); });
+resetHistoryBtn.addEventListener('click', () => { focusedSecondsTotal = 0; activityLog.innerHTML = ''; emptyState.classList.remove('hidden'); updateFocusedTotal();
+renderHeatmap();
+renderPreloadedThumbs();
+syncRailVisibility(); });
 themeToggleBtn.addEventListener('click', () => { const darkActive = document.body.classList.toggle('dark'); themeToggleBtn.textContent = darkActive ? '☀️ Light Mode' : '🌙 Dark Mode'; });
 tasksRailBtn.addEventListener('click', () => {
   const willOpen = !taskSidebar.classList.contains('open');
@@ -412,7 +396,7 @@ applyBgBtn.addEventListener('click', () => {
   const opacity = Number(bgOpacity.value) / 100;
   const panelAlpha = Number(columnOpacity.value) / 100;
   document.body.style.setProperty('--custom-bg-opacity', opacity.toString());
-  document.body.style.setProperty('--panel-alpha', panelAlpha.toString());
+  document.body.style.setProperty('--panel-alpha', (panelAlpha * 0.75).toString());
   if (bgImageData) {
     document.body.style.setProperty('--custom-bg-image', `url(${bgImageData})`);
   }
