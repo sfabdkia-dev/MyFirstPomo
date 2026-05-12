@@ -39,6 +39,42 @@ const taskInput = document.getElementById('taskInput');
 const taskList = document.getElementById('taskList');
 const focusCard = document.getElementById('focusCard');
 
+
+const panelVisibilityToggle = document.getElementById('panelVisibilityToggle');
+const panelToggleTargets = [
+  ...document.querySelectorAll('.task-sidebar, .summary-sidebar, .log-panel'),
+  ...document.querySelectorAll('.timer-header, .session-picker, .sound-settings, .controls'),
+];
+panelToggleTargets.forEach((el) => el.classList.add('panel-toggle-target'));
+let persistPanelsHidden = false;
+let hoverPanelsHidden = false;
+
+const applyPanelsVisibility = () => {
+  const hidden = persistPanelsHidden || hoverPanelsHidden;
+  document.body.classList.toggle('panels-hidden', hidden);
+  panelVisibilityToggle.classList.toggle('active', hidden);
+  panelVisibilityToggle.setAttribute('aria-pressed', hidden ? 'true' : 'false');
+  panelVisibilityToggle.setAttribute('aria-label', hidden ? 'Show panels' : 'Hide panels');
+  panelVisibilityToggle.title = hidden ? 'Show panels' : 'Hide panels';
+};
+
+panelVisibilityToggle.addEventListener('mouseenter', () => {
+  hoverPanelsHidden = true;
+  applyPanelsVisibility();
+});
+
+panelVisibilityToggle.addEventListener('mouseleave', () => {
+  hoverPanelsHidden = false;
+  applyPanelsVisibility();
+});
+
+panelVisibilityToggle.addEventListener('click', () => {
+  persistPanelsHidden = !persistPanelsHidden;
+  hoverPanelsHidden = false;
+  applyPanelsVisibility();
+});
+
+
 let workMinutes = 50; let breakMinutes = 10; let isWorkMode = true;
 let totalSeconds = workMinutes * 60; let remainingSeconds = totalSeconds;
 let isRunning = false; let intervalId = null;
@@ -184,6 +220,7 @@ const clearRunningInterval = () => {
 const onSessionFinished = () => {
   clearRunningInterval();
   isRunning = false;
+  setPresetButtonsDisabled(false);
 
   if (isWorkMode) {
     addLogEntry(totalSeconds);
@@ -233,6 +270,7 @@ const stopTimer = ({ keepMode = true } = {}) => {
   isRunning = false;
   waitingForManualStart = false;
   startPauseBtn.textContent = 'Start';
+  setPresetButtonsDisabled(false);
   statusMessage.textContent = '';
   if (!keepMode) isWorkMode = true;
   resetCurrentMode();
@@ -244,6 +282,12 @@ const setPresetState = (activeButton = null) => presets.forEach((preset) => {
   preset.setAttribute('aria-pressed', isActive ? 'true' : 'false');
 });
 
+const setPresetButtonsDisabled = (isDisabled) => {
+  [...presets, customPresetChip].forEach((button) => {
+    button.disabled = isDisabled;
+  });
+};
+
 startPauseBtn.addEventListener('click', async () => {
   if (audioCtx.state === 'suspended') await audioCtx.resume();
   if (!isRunning) {
@@ -251,6 +295,7 @@ startPauseBtn.addEventListener('click', async () => {
     waitingForManualStart = false;
     statusMessage.textContent = '';
     startPauseBtn.textContent = 'Pause';
+    setPresetButtonsDisabled(true);
     startAccurateTimer();
     return;
   }
@@ -258,6 +303,7 @@ startPauseBtn.addEventListener('click', async () => {
   clearRunningInterval();
   isRunning = false;
   startPauseBtn.textContent = 'Start';
+  setPresetButtonsDisabled(false);
 });
 
 stopBtn.addEventListener('click', () => {
@@ -279,6 +325,7 @@ applyCustomBtn.addEventListener('click', () => {
 });
 
 presets.forEach((button) => button.addEventListener('click', () => {
+  if (button === customPresetChip) return;
   setPresetState(button); customPresetChip.classList.remove('active'); workMinutes = Number(button.dataset.work); breakMinutes = Number(button.dataset.break); isWorkMode = true; stopTimer({ keepMode: true });
 }));
 
