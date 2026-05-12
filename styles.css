@@ -41,3 +41,12 @@ input,select{border-radius:10px;border:1px solid var(--border);padding:.55rem .6
 .side-rail.hidden{opacity:0;pointer-events:none}
 
 .thumb-grid{display:grid;grid-template-columns:repeat(4,minmax(68px,1fr));gap:.45rem}.thumb-item{aspect-ratio:4/3;border:2px solid transparent;border-radius:8px;overflow:hidden;cursor:pointer;background:#0f172a22}.thumb-item img{width:100%;height:100%;object-fit:cover}.thumb-item.active{border-color:var(--accent)}
+
+.visibility-toggle-btn{position:fixed;right:18px;bottom:18px;z-index:110;border:1px solid var(--border);background:var(--panel);color:var(--text);border-radius:999px;padding:.5rem .75rem;font-weight:700;cursor:pointer;box-shadow:var(--shadow)}
+
+.timer-panel > *,.log-panel,.task-sidebar,.summary-sidebar,.side-rail{transition:opacity .2s ease,visibility .2s ease}
+body.panels-hidden .log-panel,
+body.panels-hidden .task-sidebar,
+body.panels-hidden .summary-sidebar,
+body.panels-hidden .side-rail,
+body.panels-hidden .timer-panel > :not(#focusCard):not(#modeLabel):not(#timerDisplay){opacity:0;visibility:hidden;pointer-events:none}
