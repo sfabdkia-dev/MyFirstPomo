@@ -111,7 +111,7 @@
 
   <div id="settingsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <div class="modal-content">
-      <h2 id="settingsTitle">Background Settings</h2>
+      <h2 id="settingsTitle">Apperance</h2>
       <label class="modal-field">Choose background image
         <input id="bgImageInput" type="file" accept="image/*" />
       </label>
@@ -122,6 +122,9 @@
       <label class="modal-field">Background opacity: <span id="opacityLabel">100%</span>
         <input id="bgOpacity" type="range" min="0" max="100" value="100" />
       </label>
+      <label class="modal-field">Panel transparency: <span id="columnOpacityLabel">100%</span>
+        <input id="columnOpacity" type="range" min="0" max="100" value="100" />
+      </label>
       <div class="modal-actions">
         <button id="applyBgBtn" class="btn secondary" type="button">Apply</button>
         <button id="doneSettingsBtn" class="btn primary" type="button">Done</button>
@@ -130,5 +133,6 @@
   </div>
 
   <script src="script.js"></script>
+  <button id="visibilityToggleBtn" class="visibility-toggle-btn" type="button" aria-label="Toggle panel visibility" title="Hide panels">Eye</button>
 </body>
 </html>
