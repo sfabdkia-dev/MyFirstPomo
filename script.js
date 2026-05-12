@@ -39,6 +39,42 @@ const taskInput = document.getElementById('taskInput');
 const taskList = document.getElementById('taskList');
 const focusCard = document.getElementById('focusCard');
 
+
+const panelVisibilityToggle = document.getElementById('panelVisibilityToggle');
+const panelToggleTargets = [
+  ...document.querySelectorAll('.task-sidebar, .summary-sidebar, .log-panel'),
+  ...document.querySelectorAll('.timer-header, .session-picker, .sound-settings, .controls'),
+];
+panelToggleTargets.forEach((el) => el.classList.add('panel-toggle-target'));
+let persistPanelsHidden = false;
+let hoverPanelsHidden = false;
+
+const applyPanelsVisibility = () => {
+  const hidden = persistPanelsHidden || hoverPanelsHidden;
+  document.body.classList.toggle('panels-hidden', hidden);
+  panelVisibilityToggle.classList.toggle('active', hidden);
+  panelVisibilityToggle.setAttribute('aria-pressed', hidden ? 'true' : 'false');
+  panelVisibilityToggle.setAttribute('aria-label', hidden ? 'Show panels' : 'Hide panels');
+  panelVisibilityToggle.title = hidden ? 'Show panels' : 'Hide panels';
+};
+
+panelVisibilityToggle.addEventListener('mouseenter', () => {
+  hoverPanelsHidden = true;
+  applyPanelsVisibility();
+});
+
+panelVisibilityToggle.addEventListener('mouseleave', () => {
+  hoverPanelsHidden = false;
+  applyPanelsVisibility();
+});
+
+panelVisibilityToggle.addEventListener('click', () => {
+  persistPanelsHidden = !persistPanelsHidden;
+  hoverPanelsHidden = false;
+  applyPanelsVisibility();
+});
+
+
 let workMinutes = 50; let breakMinutes = 10; let isWorkMode = true;
 let totalSeconds = workMinutes * 60; let remainingSeconds = totalSeconds;
 let isRunning = false; let intervalId = null;
