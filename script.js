@@ -38,7 +38,6 @@ const addTaskBtn = document.getElementById('addTaskBtn');
 const taskInput = document.getElementById('taskInput');
 const taskList = document.getElementById('taskList');
 const focusCard = document.getElementById('focusCard');
-const visibilityToggleBtn = document.getElementById('visibilityToggleBtn');
 
 let workMinutes = 50; let breakMinutes = 10; let isWorkMode = true;
 let totalSeconds = workMinutes * 60; let remainingSeconds = totalSeconds;
@@ -46,8 +45,6 @@ let isRunning = false; let intervalId = null;
 let focusedSecondsTotal = 0; let waitingForManualStart = false;
 let targetEndTimestampMs = null; let lastPerfNow = null;
 let bgImageData = 'assets/backgrounds/bg1.jpg';
-let panelsHidden = false;
-let isVisibilityButtonHovered = false;
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -82,14 +79,6 @@ const syncRailVisibility = () => {
 const setSidebarState = (sidebar, isOpen) => {
   sidebar.classList.toggle('open', isOpen);
   sidebar.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
-};
-
-const syncPanelsVisibility = () => {
-  const shouldHidePanels = panelsHidden || isVisibilityButtonHovered;
-  document.body.classList.toggle('panels-hidden', shouldHidePanels);
-  visibilityToggleBtn.textContent = shouldHidePanels ? 'EyeOff' : 'Eye';
-  visibilityToggleBtn.title = shouldHidePanels ? 'Show panels' : 'Hide panels';
-  visibilityToggleBtn.setAttribute('aria-label', shouldHidePanels ? 'Show panels' : 'Hide panels');
 };
 
 
@@ -311,18 +300,6 @@ summaryRailBtn.addEventListener('click', () => {
   syncRailVisibility();
 });
 previewSoundBtn.addEventListener('click', async () => { if (audioCtx.state === 'suspended') await audioCtx.resume(); playAlert(1); });
-visibilityToggleBtn.addEventListener('mouseenter', () => {
-  isVisibilityButtonHovered = true;
-  syncPanelsVisibility();
-});
-visibilityToggleBtn.addEventListener('mouseleave', () => {
-  isVisibilityButtonHovered = false;
-  syncPanelsVisibility();
-});
-visibilityToggleBtn.addEventListener('click', () => {
-  panelsHidden = !panelsHidden;
-  syncPanelsVisibility();
-});
 
 
 
@@ -397,4 +374,3 @@ document.body.style.setProperty('--custom-bg-opacity', '1');
 setSidebarState(taskSidebar, false);
 setSidebarState(summarySidebar, false);
 syncRailVisibility();
-syncPanelsVisibility();
